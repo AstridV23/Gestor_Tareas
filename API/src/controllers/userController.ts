@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
-import db from "../config/db"; // Importamos la base de datos
 import { handleHTTP } from "../utils/error.handle";
+import UserModel from "../models/userModel";
 
 // Obtener todos los usuarios
-export const getUsers = (req: Request, res: Response) => {
+export const getUsers = (res: Response) => {
     try {
-        const stmt = db.prepare("SELECT * FROM users");
-        const users = stmt.all(); // obtiene todos los usuarios
-        res.json(users);
+        const users = UserModel.getUsers();
+        res.status(200).json(users);
     } catch (error) {
         handleHTTP(res, error);      
     }
@@ -15,18 +14,53 @@ export const getUsers = (req: Request, res: Response) => {
 
 // Crear un nuevo usuario
 export const createUser = (req: Request, res: Response) => {
-    const { nombre, email, password } = req.body;
+    const { nombre, email, password, rol } = req.body;
     try {
-        const stmt = db.prepare("INSERT INTO users (nombre, email, password) VALUES (?, ?, ?)");
-        stmt.run(nombre, email, password); // Inserta un nuevo usuario
-        res.status(201).json({ message: "Usuario creado exitosamente" });
+        const newUser = UserModel.createUser({ nombre, email, password, rol });
+        res.status(201).json({ message: "Usuario creado exitosamente", user: newUser });
     } catch (error) {
-        res.status(500).json({ error: "Error al crear usuario" });
+        handleHTTP(res, error);   
     }
 };
 
-export const getUserById = (req: Request, res: Response) => {};
+export const getUserById = (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const user = UserModel.getUserById(parseInt(id)); // Obtiene un usuario por su ID
+        res.status(200).status(200).json(user);
+    } catch (error) {
+        handleHTTP(res, error);   
+    }
+};
 
-export const updateUser = (req: Request, res: Response) => {};
+export const updateUser = (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { nombre, email, password, rol } = req.body;
+    try {
+        const result = UserModel.updateUser(parseInt(id), { nombre, email, password, rol });
+        res.status(200).json({ changes: result });
+    } catch (error) {
+        handleHTTP(res, error);   
+    }
+};
 
-export const deleteUser = (req: Request, res: Response) => {};
+export const deleteUser = (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+        const result = UserModel.deleteUser(parseInt(id));
+        res.status(200).json({ changes: result });
+    } catch (error) {
+        handleHTTP(res, error);   
+    }
+};
+
+export const getUserByEmail = (req: Request, res: Response) => {
+    const { email } = req.params;
+    try {
+        const user = UserModel.getUserByEmail(email);
+        res.status(200).json(user);
+    } catch (error) {
+        handleHTTP(res, error);   
+    }
+}
+
