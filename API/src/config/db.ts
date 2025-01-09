@@ -38,4 +38,4 @@ db.exec(`
   );
 `);
 
-export default db;
+export default db; // esto se importa cada que quieras manejar la base de datos

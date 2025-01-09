@@ -1,13 +1,5 @@
 import db from "../config/db";
-
-interface User {
-    id?: number;
-    nombre: string;
-    email: string;
-    password: string;
-    rol?: "admin" | "usuario" | "lider" ;
-    fecha_creacion?: string;
-}
+import {User} from "../interfaces/user.interface";
 
 // funciones para cada accion para usuarios
 class UserModel {

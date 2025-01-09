@@ -3,12 +3,11 @@ import {registerCtrl, loginCtrl} from "../controllers/authController"
 
 const router = Router()
 
-router.post("/login", loginCtrl(), (req: Request, res: Response) => {
-    /** .../auth/login [POST] */
-})
+// Declaramos las rutas de autenticación
 
-router.post("/register", registerCtrl(), (req: Request, res: Response) => {
-    /** .../auth/register [POST] */
-})
+/** .../auth/login [POST] */
+router.post("/login", loginCtrl);
+/** .../auth/register [POST] */
+router.post("/register", registerCtrl);
 
 export {router}

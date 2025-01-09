@@ -1,15 +1,5 @@
 import db from "../config/db";
-
-interface Task {
-    id?: number;
-    titulo: string;
-    descripcion?: string;
-    estado?: "pendiente" | "en progreso" | "completada";
-    fecha_creacion?: string;
-    fecha_limite?: string;
-    usuario_id: number;
-    prioridad: number;
-}
+import { Task } from "../interfaces/tarea.interface";
 
 class TaskModel {
   // Crear una tarea
