@@ -2,6 +2,10 @@ import "dotenv/config"
 import express from "express" 
 import cors from "cors"
 import {router} from "./routes"
+import dotenv from "dotenv"
+
+// Cargar las variables de entorno desde el archivo .env
+dotenv.config();
 
 const PORT = process.env.PORT || 3000
 const app = express()

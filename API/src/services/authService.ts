@@ -2,6 +2,7 @@ import { Auth } from "../interfaces/auth.interface";
 import { User } from "../interfaces/user.interface";
 import UserModel from "../models/userModel";
 import { encryptPassword, comparePassword } from "../utils/bcrypt.handle"
+import { generateToken } from "../utils/jwt.handle";
 
 // lógica de negocio para autenticación de usuarios
 
@@ -13,7 +14,7 @@ const registerNewUser = async (User: User) => {
     
     // Verificar si el usuario ya existe
     const checkIs = UserModel.getUserByEmail(User.email);
-    if (checkIs) return "User already exists";
+    if (checkIs) return { error: "User already exists" };
 
     // hashear la contraseña
     const hashedPassword = await encryptPassword(User.password);
@@ -32,17 +33,25 @@ const loginUser = async (auth: Auth) => {
     }
     
     // Verificar si el usuario ya existe
-    const checkIs = UserModel.getUserByEmail(auth.email);
-    if (!checkIs) return "Not found user";
+    const user = UserModel.getUserByEmail(auth.email);
+    if (!user ) return { error: "Not found user" };
 
     // Verificar si la contraseña es correcta
-    const passwordHash = checkIs.password; // la contraseña en la BD
-
+    const passwordHash = user.password; // la contraseña en la BD
     const isValid = await comparePassword(auth.password, passwordHash);
 
-    if (!isValid) return "Invalid password";
+    if (!isValid) return { error: "Invalid password" };
+    
+    // Generar token de usuario
+    const token = generateToken(user.email, user.nombre);
 
-    return checkIs; // el usuario encontrado en la DB
+    const data = {
+        email: user.email,
+        nombre: user.nombre,
+        token
+    }
+
+    return data; // Devuelve el token de usuario junto con su información
 }
 
 export { registerNewUser, loginUser };
